@@ -12,6 +12,7 @@ let t=0
 let pd=20
 
 let bezierPoints = [P0,P1,P2,P3]
+let strokeWidth = 30; //Bredden af vejen 
 
 function setup() {
   createCanvas(1600, 800);
@@ -19,14 +20,45 @@ function setup() {
 
 function draw() {
   background(220);
-  movePoint()
+  movePoint();
+    let leftCurve = []; //Array til Venstre side af vejen 
+    let rightCurve = []; //Array til højre side af vejen
+    let centerLine = []; //Array til Striben
+
   for(let t=0; t<1; t+=0.001){
     calcBezier(t);
-    drawBezier();
+    let current = createVector(P.x,P.y);
+    centerLine.push(current);
+
+      if (t > 0){
+        let prev= createVector(centerLine[centerLine.length - 2].x, centerLine[centerLine.length - 2].y);
+        let tangent = p5.Vector.sub(current, prev).normalize(); //Beregner tangent-retningen 
+        let normal = createVector(-tangent.y, tangent.x). mult(strokeWidth / 2); //Skaber en vinkelret normalvektor 
+
+        leftCurve.push(p5.Vector.add(current, normal)); //skubber punktet til venstre for bezierkurven 
+        rightCurve.push(p5.Vector.sub(current,normal)); //Skubber punktet til højre for bezierkurven 
+      }
   }
-  drawPoints()
-  supportLines()
-  //text("Click & drag the points to change the bézier curve",50,375)
+//Vejens bredde
+  fill(50); 
+  noStroke();
+  beginShape();
+  for (let v of leftCurve) vertex(v.x, v.y); //tilføjer den venstre kant af vejen
+  for (let v of rightCurve.reverse()) vertex(v.x, v.y); //tilføjer den højre kant af vejen (i modsat rækkefølge)
+  endShape(CLOSE); 
+
+  //Midter Striben 
+  stroke(255);
+  strokeWeight(5);
+  noFill();
+  for (let i = 0; i < centerLine.length; 1 += 10) {
+    if (i + 5 < centerLine.length) {
+      line(centerLine[i].x, centerLine[i].y, centerLine[i+5].x, enterLine[i+5].y);
+    }
+  }
+
+  drawPoints();
+  supportLines();
 }
 
 function calcBezier(t){
@@ -48,10 +80,6 @@ function supportLines(){
   line(P0.x,P0.y,P1.x,P1.y);
   line(P1.x,P1.y,P2.x,P2.y);
   line(P2.x,P2.y,P3.x,P3.y);
-}
-
-function drawBezier(){
-  circle(P.x,P.y,45);
 }
 
 function drawPoints(){
