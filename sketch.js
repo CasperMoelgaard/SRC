@@ -30,7 +30,7 @@ function draw() {
     let current = createVector(P.x,P.y);
     centerLine.push(current);
 
-      if (t > 0){
+      if (centerLine.length > 1){
         let prev= createVector(centerLine[centerLine.length - 2].x, centerLine[centerLine.length - 2].y);
         let tangent = p5.Vector.sub(current, prev).normalize(); //Beregner tangent-retningen 
         let normal = createVector(-tangent.y, tangent.x). mult(strokeWidth / 2); //Skaber en vinkelret normalvektor 
@@ -44,16 +44,16 @@ function draw() {
   noStroke();
   beginShape();
   for (let v of leftCurve) vertex(v.x, v.y); //tilføjer den venstre kant af vejen
-  for (let v of rightCurve.reverse()) vertex(v.x, v.y); //tilføjer den højre kant af vejen (i modsat rækkefølge)
+  for (let v of [...rightCurve].reverse()) vertex(v.x, v.y); //tilføjer den højre kant af vejen (i modsat rækkefølge)
   endShape(CLOSE); 
 
   //Midter Striben 
   stroke(255);
   strokeWeight(5);
   noFill();
-  for (let i = 0; i < centerLine.length; 1 += 10) {
+  for (let i = 0; i < centerLine.length; i += 10) {
     if (i + 5 < centerLine.length) {
-      line(centerLine[i].x, centerLine[i].y, centerLine[i+5].x, enterLine[i+5].y);
+      line(centerLine[i].x, centerLine[i].y, centerLine[i+5].x, centerLine[i+5].y);
     }
   }
 
@@ -91,7 +91,7 @@ function drawPoints(){
 
 function movePoint(){
   for(let i=0; i<bezierPoints.length;i++){
-    if(bezierPoints[i].relativX!=undefined){
+    if(bezierPoints[i].relativX!=undefined){ //hvis et punkt er valgt kan det flyttes med musen 
       bezierPoints[i].x=mouseX+bezierPoints[i].relativX
       bezierPoints[i].y=mouseY+bezierPoints[i].relativY
     }
@@ -100,7 +100,7 @@ function movePoint(){
 
 function mousePressed(){
   for(let i=0; i<bezierPoints.length;i++){
-    if(dist(bezierPoints[i].x,bezierPoints[i].y,mouseX,mouseY)<pd/2){
+    if(dist(bezierPoints[i].x,bezierPoints[i].y,mouseX,mouseY)<10){ //tjek om musen er tæt på punktet
       bezierPoints[i].relativX=bezierPoints[i].x-mouseX
       bezierPoints[i].relativY=bezierPoints[i].y-mouseY
     }
@@ -108,9 +108,9 @@ function mousePressed(){
 }
 
 function mouseReleased(){
-  for(let i=0; i<bezierPoints.length;i++){
+  for(let i=0; i<bezierPoints.length;i++){ 
     bezierPoints[i].relativX=undefined
-    bezierPoints[i].relativY=undefined
+    bezierPoints[i].relativY=undefined //nulstiller flytte funktionen, når musen slippes
   } 
 }
 
