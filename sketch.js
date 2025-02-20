@@ -40,12 +40,12 @@ function draw() {
       }
   }
 //Vejens bredde
-  fill(50); 
-  noStroke();
-  beginShape();
+  fill(50); //Sort farve
+  noStroke(); //uden kant på figuren 
+  beginShape(); //Gør det muligt at tegne former, ved brug af vertex
   for (let v of leftCurve) vertex(v.x, v.y); //tilføjer den venstre kant af vejen
   for (let v of [...rightCurve].reverse()) vertex(v.x, v.y); //tilføjer den højre kant af vejen (i modsat rækkefølge)
-  endShape(CLOSE); 
+  endShape(CLOSE); //ved brug af "beginShape" skal man ogs¨å afslutte formen med "endShape"
 
   //Midter Striben 
   stroke(255);
@@ -113,37 +113,3 @@ function mouseReleased(){
     bezierPoints[i].relativY=undefined //nulstiller flytte funktionen, når musen slippes
   } 
 }
-
-/*
-/////////// version til et virkårligt antal punkter
-let points = [ [0, 128], [128, 0], [256, 0], [384, 128] ]
-function drawDecasteljau(points){
-  for(let i = 0; i < 1; i+=0.001){
-    let ps = crlPtReduceDeCasteljau (points, i)
-    circle(ps[ps.length-1][0][0],ps[ps.length-1][0][1],10)
-  }
-}
-
-//https://en.wikipedia.org/wiki/De_Casteljau%27s_algorithm 
-function crlPtReduceDeCasteljau(points, t) {
-    let retArr = [ points.slice () ];
-	while (points.length > 1) {
-        let midpoints = [];
-		for (let i = 0; i+1 < points.length; ++i) {
-			let ax = points[i][0];
-			let ay = points[i][1];
-			let bx = points[i+1][0];
-			let by = points[i+1][1];
-            // a * (1-t) + b * t = a + (b - a) * t
-			midpoints.push([
-				ax + (bx - ax) * t,
-				ay + (by - ay) * t,
-			]);
-		}
-        retArr.push (midpoints)
-		points = midpoints;
-	}
-	return retArr;
-}
-////////////////
-*/
